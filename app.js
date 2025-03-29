@@ -12,8 +12,10 @@ const bot = new TelegramBot(token, { polling: true });
 
 bot.onText(/\/time/, (msg) => {
   const chatId = msg.chat.id;
+  const firstName = msg.from.first_name || "دوست عزیز"; 
   const now = new Date();
-  const timeString = now.toLocaleTimeString("fa-IR");
 
-  bot.sendMessage(chatId, `⏰ زمان فعلی: ${timeString}`);
+  const timeString = now.toLocaleTimeString("fa-IR", { timeZone: "Asia/Tehran" });
+
+  bot.sendMessage(chatId, `سلام ${firstName} 👋\n⏰ زمان فعلی (ساعت ایران): ${timeString}`);
 });
