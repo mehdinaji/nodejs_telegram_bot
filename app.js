@@ -10,12 +10,31 @@ if (!token) {
 
 const bot = new TelegramBot(token, { polling: true });
 
-bot.onText(/\/time/, (msg) => {
+bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const firstName = msg.from.first_name || "دوست عزیز"; 
+
+  bot.sendMessage(chatId, `سلام ${firstName} 👋\nلطفاً انتخاب کنید:`, {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: "⏰ ساعت", callback_data: "time" }],
+        [{ text: "📅 تاریخ", callback_data: "date" }]
+      ]
+    }
+  });
+});
+
+bot.on("callback_query", (query) => {
+  const chatId = query.message.chat.id;
   const now = new Date();
 
-  const timeString = now.toLocaleTimeString("fa-IR", { timeZone: "Asia/Tehran" });
+  if (query.data === "time") {
+    const timeString = now.toLocaleTimeString("fa-IR", { timeZone: "Asia/Tehran" });
+    bot.sendMessage(chatId, `⏰ ساعت فعلی (ایران): ${timeString}`);
+  } else if (query.data === "date") {
+    const dateString = now.toLocaleDateString("fa-IR", { timeZone: "Asia/Tehran" });
+    bot.sendMessage(chatId, `📅 تاریخ امروز (ایران): ${dateString}`);
+  }
 
-  bot.sendMessage(chatId, `سلام ${firstName} 👋\n⏰ زمان فعلی (ساعت ایران): ${timeString}`);
+  bot.answerCallbackQuery(query.id);
 });
